@@ -1,0 +1,58 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // IMPORTANT: replace admin@example.com with exactly the ADMIN_EMAIL
+    // in firebase-config.js before you publish these rules.
+    function signedIn() { return request.auth != null; }
+    function admin() {
+      return signedIn() && request.auth.token.email == 'wakchaurepratik2008@gmail.com';
+    }
+    function validIssue() {
+      return request.resource.data.keys().hasAll([
+        'id','equipmentCode','studentCode','quantity','takenDate',
+        'expectedDate','purpose','notes','status','returnDate',
+        'condition','receivedBy','createdBy','createdAt'
+      ])
+      && request.resource.data.createdBy == request.auth.uid
+      && request.resource.data.status == 'Issued'
+      && request.resource.data.returnDate == ''
+      && request.resource.data.receivedBy == ''
+      && request.resource.data.condition == ''
+      && request.resource.data.quantity is int
+      && request.resource.data.quantity >= 1
+      && request.resource.data.quantity <= 100
+      && request.resource.data.purpose is string
+      && request.resource.data.purpose.size() >= 5
+      && request.resource.data.purpose.size() <= 350
+      && request.resource.data.equipmentCode is string
+      && request.resource.data.studentCode is string
+      && exists(/databases/$(database)/documents/students/$(request.resource.data.studentCode))
+      && exists(/databases/$(database)/documents/equipment/$(request.resource.data.equipmentCode))
+      && getAfter(/databases/$(database)/documents/equipment/$(request.resource.data.equipmentCode)).data.issuedCount
+        == get(/databases/$(database)/documents/equipment/$(request.resource.data.equipmentCode)).data.issuedCount
+        + request.resource.data.quantity;
+    }
+
+    match /equipment/{code} {
+      allow read: if signedIn();
+      allow create, delete: if admin();
+      allow update: if admin() ||
+        (signedIn() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['issuedCount'])
+         && request.resource.data.issuedCount is int
+         && request.resource.data.issuedCount > resource.data.issuedCount
+         && request.resource.data.issuedCount <= resource.data.quantity);
+    }
+
+    match /students/{code} {
+      // Store only names and student codes; no parent phone or contact details.
+      allow read: if signedIn();
+      allow write: if admin();
+    }
+
+    match /loans/{id} {
+      allow read: if admin() || (signedIn() && resource.data.createdBy == request.auth.uid);
+      allow create: if signedIn() && request.resource.data.id == id && validIssue();
+      allow update, delete: if admin();
+    }
+  }
+}

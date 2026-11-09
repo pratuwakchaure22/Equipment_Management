@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#090a11"><title>SMART LAB | Equipment Management</title><link rel="stylesheet" href="styles.css"><link rel="icon" href="assets/smart-lab-logo.png"></head>
+<body>
+<div class="app">
+<aside class="sidebar">
+  <div class="brand"><img src="assets/smart-lab-logo.png" alt="SMART LAB crest"><div><strong>SMART LAB</strong><small>Equipment Management</small></div></div>
+  <div class="side-label">LAB WORKSPACE</div>
+  <nav aria-label="Primary">
+    <button class="nav active" data-view="dashboard"><span class="nav-icon">▦</span>Dashboard</button>
+    <button class="nav" data-view="catalogue"><span class="nav-icon">▤</span>Equipment catalogue</button>
+    <button class="nav" data-view="myloans"><span class="nav-icon">◷</span>My borrowings</button>
+    <div class="nav-divider"></div>
+    <div class="side-label admin-only hidden">LAB ADMINISTRATION</div>
+    <button class="nav admin-only hidden" data-view="returns"><span class="nav-icon">⇄</span>Issue & return register</button>
+    <button class="nav admin-only hidden" data-view="inventory"><span class="nav-icon">▣</span>Inventory management</button>
+    <button class="nav admin-only hidden" data-view="reports"><span class="nav-icon">↧</span>Reports & exports</button>
+  </nav>
+  <div class="sidebar-bottom"><span id="connection-label">Initializing…</span><p>INNOVATE <i>✦</i> DISCOVER <i>✦</i> IMPACT</p></div>
+</aside>
+<div class="main-column">
+  <header class="topbar"><button id="mobile-nav" class="icon-btn mobile-only" aria-label="Toggle navigation">☰</button>
+    <div class="topbar-heading"><span class="eyebrow">SANJIVANI UNIVERSITY <span class="gold-star">✦</span> SMART LAB</span><h1 id="page-title">Overview</h1></div>
+    <div class="user-area"><span id="mode-chip" class="chip">Local mode</span><span id="user-label" class="username">Student access</span><button id="auth-button" class="button ghost">Admin login</button></div>
+  </header>
+  <main id="app-content" class="content"><div class="loading">Loading equipment information…</div></main>
+  <footer>© SMART LAB · SANJIVANI UNIVERSITY <span>INNOVATE · DISCOVER · IMPACT</span></footer>
+</div></div>
+<div id="toast" role="status" aria-live="polite"></div><div id="modal-root"></div>
+<script src="firebase-config.js"></script><script src="seed-data.js"></script><script defer src="app.js"></script>
+</body></html>
